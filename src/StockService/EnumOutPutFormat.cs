@@ -3,6 +3,6 @@
     internal enum EnumOutPutFormat
     {
         CSV,
-        JSOn
+        JSON
     }
 }

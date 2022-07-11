@@ -8,16 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="appsettings.json" />
     <None Remove="Resources\CsvFiles\quote.csv" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
     <Content Include="Resources\CsvFiles\quote.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -32,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\FinChatter.API\FinChatter.API.csproj" />
     <ProjectReference Include="..\..\src\FinChatter.Application\FinChatter.Application.csproj" />
     <ProjectReference Include="..\..\src\FinChatter.Domain\FinChatter.Domain.csproj" />
     <ProjectReference Include="..\..\src\FinChatter.Infrastructure\FinChatter.Infrastructure.csproj" />

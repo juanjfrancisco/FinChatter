@@ -24,7 +24,7 @@ namespace StockService
 
         public async Task<string> GetStockQuotesRawJsonAsync(string[] symbols)
         {
-            var endPoint = GetEndpoint(symbols, EnumOutPutFormat.JSOn);
+            var endPoint = GetEndpoint(symbols, EnumOutPutFormat.JSON);
             return await _httpClient.GetStringAsync(endPoint);
         }
 
