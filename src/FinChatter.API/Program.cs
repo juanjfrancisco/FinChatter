@@ -1,4 +1,5 @@
 using FinChatter.Infrastructure;
+using FinChatter.Infrastructure.Chat;
 using FinChatter.Infrastructure.Extension;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,5 +24,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<FinChatterHub>("/hubs/finchatter");
 
 app.Run();

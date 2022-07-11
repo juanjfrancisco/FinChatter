@@ -1,5 +1,6 @@
 ﻿using FinChatter.Application.Interfaces;
 using FinChatter.Application.Model;
+using FinChatter.Infrastructure.Chat;
 using FinChatter.Infrastructure.Files;
 using FinChatter.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -19,6 +20,8 @@ namespace FinChatter.Infrastructure
             services.AddSingleton<IStockApiClient>(new StockApiClient("https://stooq.com"));
             services.AddSingleton<ICsvFileHelper, CsvFileHelper>();
             AddAuthentication(services);
+            services.AddSingleton(typeof(IConnectionMapping<>), typeof(ConnectionMapping<>));
+            services.AddSignalR();
             return services;
         }
 
