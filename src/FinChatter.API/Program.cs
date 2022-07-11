@@ -1,27 +1,22 @@
-
-using FinChatter.Application.Model;
 using FinChatter.Infrastructure;
+using FinChatter.Infrastructure.Extension;
 
 var builder = WebApplication.CreateBuilder(args);
+var services  = builder.Services;
+var config = builder.Configuration;
 
-// Add services to the container.
+services.AddControllers();
+services.AddEndpointsApiExplorer();
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+services.AddSwaggerApiHelp();
 
-builder.Services.AddInfrastructureServices(builder.Configuration);
+services.AddInfrastructureServices(config);
 
 var app = builder.Build();
+
 app.UseAuthentication();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwaggerApiHelp(config);
 
 app.UseHttpsRedirection();
 
