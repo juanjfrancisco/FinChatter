@@ -11,7 +11,8 @@ namespace FinChatter.UnitTest
     internal static class SetupSetting
     {
         public static ICsvFileHelper CsvFileHelper { get; private set; }
-        public static IStockApiClient? StockApiClient { get; internal set; }
+        public static IStockApiClient StockApiClient { get; internal set; }
+        public static ITokenManager TokenManager { get; internal set; }
 
         static SetupSetting()
         {
@@ -40,6 +41,7 @@ namespace FinChatter.UnitTest
 
             CsvFileHelper = service.Services.GetService(typeof(ICsvFileHelper)) as ICsvFileHelper;
             StockApiClient = service.Services.GetService(typeof(IStockApiClient)) as IStockApiClient;
+            TokenManager = service.Services.GetService(typeof(ITokenManager)) as ITokenManager; 
         }
        
     }

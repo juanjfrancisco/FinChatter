@@ -1,8 +1,12 @@
 ﻿using FinChatter.Application.Interfaces;
+using FinChatter.Application.Model;
 using FinChatter.Infrastructure.Files;
 using FinChatter.Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace FinChatter.Infrastructure
 {
@@ -10,10 +14,41 @@ namespace FinChatter.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
-            //Todo: maybe pass Ioptions<Configuration>
+            services.Configure<TokenManagerConfiguration>(configuration.GetSection("JwtConfig"));
+            services.AddSingleton<ITokenManager, TokenManager>();
             services.AddSingleton<IStockApiClient>(new StockApiClient("https://stooq.com"));
             services.AddSingleton<ICsvFileHelper, CsvFileHelper>();
+            AddAuthentication(services);
             return services;
+        }
+
+
+        private static void AddAuthentication(IServiceCollection services)
+        {
+            using (ServiceProvider serviceProvider = services.BuildServiceProvider())
+            {
+                ITokenManager tokenManager = serviceProvider.GetRequiredService<ITokenManager>();
+                services.AddAuthentication(config =>
+                {
+                    config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+              .AddJwtBearer(options =>
+              {
+                  options.RequireHttpsMetadata = false;
+                  options.SaveToken = true;
+                  options.TokenValidationParameters = new TokenValidationParameters
+                  {
+                      ValidateIssuerSigningKey = true,
+                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(tokenManager.IssuerSigningKey)),
+                      ValidateIssuer = false,
+                      ValidateAudience = false,
+                      ClockSkew = TimeSpan.Zero,
+                      RequireExpirationTime = false,
+
+                  };
+              });
+            }
         }
     }
 }
