@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FinChatter.API.Contracts
+namespace FinChatter.API.Contracts.Response
 {
     public class ClientResponse<T>
     {

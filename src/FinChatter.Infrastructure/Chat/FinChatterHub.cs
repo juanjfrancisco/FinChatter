@@ -16,11 +16,11 @@ namespace FinChatter.Infrastructure.Chat
         {
             _usersConnections = usersConnections;
         }
-        public Task SendMessage(ChatMessage message)
+        public Task SendMessage(string userName, string message)//(ChatMessage message)
         {
-            message.UserName = Context.User.Identity.Name;
+           // message.UserName = Context.User.Identity.Name;
   
-            var sendMessage = Clients.All.SendAsync("SendMessage", message);
+            var sendMessage = Clients.All.SendAsync("SendMessage", userName, message);
 
             return sendMessage;
         }

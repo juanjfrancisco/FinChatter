@@ -7,19 +7,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A2A85DF3-213
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{5AF9903C-D201-4128-989A-4898F98409BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinChatter.Domain", "src\FinChatter.Domain\FinChatter.Domain.csproj", "{FAA78525-A668-43C9-A3B2-C6A2EC9E186C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinChatter.Domain", "src\FinChatter.Domain\FinChatter.Domain.csproj", "{FAA78525-A668-43C9-A3B2-C6A2EC9E186C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinChatter.Application", "src\FinChatter.Application\FinChatter.Application.csproj", "{F57BDA50-0355-4ED5-92AB-360367E9DB1F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinChatter.Application", "src\FinChatter.Application\FinChatter.Application.csproj", "{F57BDA50-0355-4ED5-92AB-360367E9DB1F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinChatter.Infrastructure", "src\FinChatter.Infrastructure\FinChatter.Infrastructure.csproj", "{AEAFC500-F4A7-4291-B20E-4707BBB18606}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinChatter.Infrastructure", "src\FinChatter.Infrastructure\FinChatter.Infrastructure.csproj", "{AEAFC500-F4A7-4291-B20E-4707BBB18606}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinChatter.API", "src\FinChatter.API\FinChatter.API.csproj", "{F2B4905B-E205-4BF6-9CE9-4952994DBEA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinChatter.API", "src\FinChatter.API\FinChatter.API.csproj", "{F2B4905B-E205-4BF6-9CE9-4952994DBEA1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinChatter.API.Contracts", "src\FinChatter.API.Contracts\FinChatter.API.Contracts.csproj", "{5BD0824B-F360-4F61-851A-2FAE5791DDD2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinChatter.API.Contracts", "src\FinChatter.API.Contracts\FinChatter.API.Contracts.csproj", "{5BD0824B-F360-4F61-851A-2FAE5791DDD2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockService", "src\StockService\StockService.csproj", "{02736814-2D71-49C8-A60B-CD0B2ED5C954}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockService", "src\StockService\StockService.csproj", "{02736814-2D71-49C8-A60B-CD0B2ED5C954}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinChatter.UnitTest", "test\FinChatter.UnitTest\FinChatter.UnitTest.csproj", "{0053FF75-7D47-4AF4-A7DD-2C500D7A3351}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinChatter.UnitTest", "test\FinChatter.UnitTest\FinChatter.UnitTest.csproj", "{0053FF75-7D47-4AF4-A7DD-2C500D7A3351}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinChatter.WebUI.Core", "src\FinChatter.WebUI.Core\FinChatter.WebUI.Core.csproj", "{0B15EC63-6519-4893-97CF-3CF771ADECF6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinChatter.WebUI", "src\FinChatter.WebUI\FinChatter.WebUI.csproj", "{B52EDE46-CC3A-4CFC-A68E-767FDF7F8BD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinChatter.API.Client", "src\FinChatter.API.Client\FinChatter.API.Client.csproj", "{964563FC-A420-484E-AB68-1FDBAA87D735}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +61,18 @@ Global
 		{0053FF75-7D47-4AF4-A7DD-2C500D7A3351}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0053FF75-7D47-4AF4-A7DD-2C500D7A3351}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0053FF75-7D47-4AF4-A7DD-2C500D7A3351}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B15EC63-6519-4893-97CF-3CF771ADECF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B15EC63-6519-4893-97CF-3CF771ADECF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B15EC63-6519-4893-97CF-3CF771ADECF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B15EC63-6519-4893-97CF-3CF771ADECF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B52EDE46-CC3A-4CFC-A68E-767FDF7F8BD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B52EDE46-CC3A-4CFC-A68E-767FDF7F8BD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B52EDE46-CC3A-4CFC-A68E-767FDF7F8BD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B52EDE46-CC3A-4CFC-A68E-767FDF7F8BD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{964563FC-A420-484E-AB68-1FDBAA87D735}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{964563FC-A420-484E-AB68-1FDBAA87D735}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{964563FC-A420-484E-AB68-1FDBAA87D735}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{964563FC-A420-484E-AB68-1FDBAA87D735}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,6 +85,9 @@ Global
 		{5BD0824B-F360-4F61-851A-2FAE5791DDD2} = {A2A85DF3-2138-4C4B-9E9C-54E168D198BB}
 		{02736814-2D71-49C8-A60B-CD0B2ED5C954} = {A2A85DF3-2138-4C4B-9E9C-54E168D198BB}
 		{0053FF75-7D47-4AF4-A7DD-2C500D7A3351} = {5AF9903C-D201-4128-989A-4898F98409BB}
+		{0B15EC63-6519-4893-97CF-3CF771ADECF6} = {A2A85DF3-2138-4C4B-9E9C-54E168D198BB}
+		{B52EDE46-CC3A-4CFC-A68E-767FDF7F8BD3} = {A2A85DF3-2138-4C4B-9E9C-54E168D198BB}
+		{964563FC-A420-484E-AB68-1FDBAA87D735} = {A2A85DF3-2138-4C4B-9E9C-54E168D198BB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F80902C0-CBD6-4CE3-A95B-B6A4F97C21FD}
