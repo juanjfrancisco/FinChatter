@@ -1,13 +1,7 @@
 using FinChatter.Application.Interfaces;
-using Microsoft.AspNetCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Linq;
-using FinChatter.Infrastructure;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Builder;
 using FinChatter.Application.Model;
 
 namespace FinChatter.UnitTest
@@ -21,6 +15,7 @@ namespace FinChatter.UnitTest
         {
             _helper = SetupSetting.CsvFileHelper;
         }
+        
         [TestMethod]
         public void GetRecordsFromCsvFile()
         {

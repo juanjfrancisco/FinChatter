@@ -1,29 +1,32 @@
 ﻿using FinChatter.Application.Interfaces;
 using FinChatter.Application.Model;
 using Microsoft.AspNetCore.SignalR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FinChatter.Infrastructure.Chat
 {
     public  class FinChatterHub : Hub
     {
-        IConnectionMapping<Guid> _usersConnections;
-        public FinChatterHub(IConnectionMapping<Guid> usersConnections)
+        private readonly IConnectionMapping<Guid> _usersConnections;
+        private readonly IMqSender _mqSender;
+        public FinChatterHub(IConnectionMapping<Guid> usersConnections, IMqSender mqSender)
         {
             _usersConnections = usersConnections;
+            _mqSender = mqSender;
         }
-        public Task SendMessage(string userName, string message)//(ChatMessage message)
+        public async Task SendMessage (ChatMessage message)
         {
-           // message.UserName = Context.User.Identity.Name;
-  
-            var sendMessage = Clients.All.SendAsync("SendMessage", userName, message);
+            if (IsCommand(message))
+                _mqSender.SendMessage(message);
 
-            return sendMessage;
+                await Clients.All.SendAsync("SendMessage", message);
         }
+
+        private static bool IsCommand(ChatMessage message)
+        {
+            //Todo: improve command options
+            return message != null && !string.IsNullOrEmpty(message.Message) && message.Message.Contains("/stock=");
+        }
+
         public override Task OnConnectedAsync()
         {
             _usersConnections.Add(GetUserId(), Context.ConnectionId);

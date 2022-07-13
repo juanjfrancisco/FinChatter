@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace FinChatter.Application.Model
 {
@@ -19,18 +14,18 @@ namespace FinChatter.Application.Model
         public string Time { get; set; }
 
         [JsonPropertyName("open")]
-        public decimal Open { get; set; }
+        public string Open { get; set; }
 
         [JsonPropertyName("high")]
-        public decimal High { get; set; }
+        public string High { get; set; }
 
         [JsonPropertyName("low")]
-        public decimal Low { get; set; }
+        public string Low { get; set; }
 
         [JsonPropertyName("close")]
-        public decimal Close { get; set; }
+        public string Close { get; set; }
 
         [JsonPropertyName("volume")]
-        public int Volume { get; set; }
+        public string Volume { get; set; }
     }
 }

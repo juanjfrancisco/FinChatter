@@ -101,13 +101,13 @@ else
             // Create the chat client
             string baseUrl = navigationManager.BaseUri;
 
-            _hubUrl = loginResponse.Data.FinChatterUrl; //"https://localhost:7208/hubs/finchatter";
+            _hubUrl = loginResponse.Data.FinChatterUrl;
 
             _hubConnection = new HubConnectionBuilder()
                 .WithUrl(_hubUrl)
                 .Build();
 
-            _hubConnection.On<string, string>("SendMessage", BroadcastMessage);
+            _hubConnection.On<ChatMessage>("SendMessage", BroadcastMessage);
 
             await _hubConnection.StartAsync();
 
@@ -120,11 +120,11 @@ else
         }
     }
 
-    private void BroadcastMessage(string name, string message)
+    private void BroadcastMessage(ChatMessage message)
     {
-        bool isMine = name.Equals(_username, StringComparison.OrdinalIgnoreCase);
+        bool isMine = message.UserName.Equals(_username, StringComparison.OrdinalIgnoreCase);
 
-        _messages.Add(new Message(name, message, isMine));
+        _messages.Add(new Message(message.UserName, message.Message, isMine));
 
         // Inform blazor the UI needs updating
         StateHasChanged();
@@ -148,7 +148,7 @@ else
     {
         if (_isChatting && !string.IsNullOrWhiteSpace(message))
         {
-            await _hubConnection.SendAsync("SendMessage", _username, message);
+            await _hubConnection.SendAsync("SendMessage", new ChatMessage { UserName = _username, Message = message } );
 
             _newMessage = string.Empty;
         }

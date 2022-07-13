@@ -2,6 +2,7 @@
 using FinChatter.Application.Model;
 using FinChatter.Infrastructure.Chat;
 using FinChatter.Infrastructure.Files;
+using FinChatter.Infrastructure.MQ;
 using FinChatter.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
@@ -16,12 +17,16 @@ namespace FinChatter.Infrastructure
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<TokenManagerConfiguration>(configuration.GetSection("JwtConfig"));
+            services.Configure<RabbitMqConfiguration>(configuration.GetSection("RabbitMQ"));
             services.AddSingleton<ITokenManager, TokenManager>();
-            services.AddSingleton<IStockApiClient>(new StockApiClient("https://stooq.com"));
+            services.Configure<StooqAPIConfiguration>(configuration.GetSection("StooqAPI"));
+            services.AddSingleton<IStockApiClient, StockApiClient>();
             services.AddSingleton<ICsvFileHelper, CsvFileHelper>();
+            services.AddSingleton<IMqSender, BotSender>();
             AddAuthentication(services);
             services.AddSingleton(typeof(IConnectionMapping<>), typeof(ConnectionMapping<>));
             services.AddSignalR();
+            services.AddHostedService<BotReceiverChatSenderService>();
             return services;
         }
 

@@ -9,9 +9,13 @@ namespace StockService
     public class StooqApiClient
     {
         private readonly HttpClient _httpClient;
-        public StooqApiClient(string baseUrl)
+        public StooqApiClient()
         {
             _httpClient = new HttpClient();
+        }
+
+        public void SetBaseUrl(string baseUrl)
+        {
             _httpClient.BaseAddress = new Uri(baseUrl);
         }
         //TODO: manage exepctions 

@@ -2,7 +2,6 @@
 using FinChatter.Application.Interfaces;
 using FinChatter.Application.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using StockService;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
@@ -20,7 +19,7 @@ namespace FinChatter.UnitTest
         {
             _stooqApiClient = SetupSetting.StockApiClient;
             _csvHelper = SetupSetting.CsvFileHelper;
-            _symbolsRequest = new string[] { "AAL.US", "AAPL.US", "ABC.US" };
+            _symbolsRequest = new string[] { "AAL.US", "AAPL.US", "ABC.US" }; //{ "appl.us" };
         }
 
         [TestMethod]
