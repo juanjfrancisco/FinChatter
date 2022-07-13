@@ -19,6 +19,7 @@ namespace FinChatter.Infrastructure
             services.AddSingleton<IStockApiClient, StockApiClient>();
             services.AddSingleton<ICsvFileHelper, CsvFileHelper>();
             services.AddSingleton<IMqSender, BotSender>();
+            services.AddSingleton<IStockService, StockBotService>();
             services.AddHostedService<BotReceiverService>();
             AddHealthCheck(services, configuration);
            

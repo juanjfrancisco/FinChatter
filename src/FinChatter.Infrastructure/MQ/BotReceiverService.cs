@@ -11,17 +11,18 @@ namespace FinChatter.Infrastructure.MQ
 {
     internal class BotReceiverService : BotReceiverServiceBase
     {
-        public BotReceiverService(IOptions<RabbitMqConfiguration> mqConfig, IStockApiClient stockApiClient, ICsvFileHelper csvFileHelper, IMqSender mqSender) 
-            : base(mqConfig, stockApiClient, csvFileHelper, mqSender)
+        private readonly IStockService _stockService;
+        public BotReceiverService(IOptions<RabbitMqConfiguration> mqConfig, IMqSender mqSender, IStockService stockService)
+            : base(mqConfig, mqSender)
         {
+            _stockService = stockService;
         }
 
         protected override async Task MessageHandler(byte[] body)
         {
             var content = Encoding.UTF8.GetString(body);
             var message = JsonSerializer.Deserialize<ChatMessage>(content);
-            var symbols = GetStockCodes(message.Message);
-            var quotes = await GetStockQuote(symbols);
+            var quotes = await _stockService.GetStockQuote(message.Message);
 
             message.UserName = "#boot";
 
@@ -33,27 +34,6 @@ namespace FinChatter.Infrastructure.MQ
 
             _mqSender.SendMessage(message);
         }
-
-        private string[] GetStockCodes(string message)
-        {
-            var proccesor = new Regex(@"\/stock=(?<StockCode>.*)");
-            Match matches = proccesor.Match(message);
-
-            if (matches.Success)
-            {
-                var stockCode = matches.Groups["StockCode"].Value.Trim();
-                return stockCode.Split(',');
-            }
-
-            return Array.Empty<string>();
-        }
-        private async Task<List<GetStockQuotesResponse>> GetStockQuote(string [] symbols)
-        {
-            var quotesStream = await _stockApiClient.GetStockQuotesCsvAsync(symbols);
-            var json = await _stockApiClient.GetStockQuotesRawJsonAsync(symbols);
-            return _csvFileHelper.GetRecords<GetStockQuotesResponse>(quotesStream).ToList();
-        }
-
 
     }
 }

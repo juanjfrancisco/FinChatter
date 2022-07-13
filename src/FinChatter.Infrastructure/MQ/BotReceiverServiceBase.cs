@@ -10,17 +10,13 @@ namespace FinChatter.Infrastructure.MQ
     internal abstract class BotReceiverServiceBase : BackgroundService
     {
         protected readonly IOptions<RabbitMqConfiguration> _mqConfiguration;
-        protected readonly IStockApiClient _stockApiClient;
-        protected readonly ICsvFileHelper _csvFileHelper;
         protected readonly IMqSender _mqSender;
         protected IConnection _mqConnection;
         protected IModel _mqChannel;
 
-        public BotReceiverServiceBase(IOptions<RabbitMqConfiguration> mqConfig, IStockApiClient stockApiClient, ICsvFileHelper csvFileHelper, IMqSender mqSender)
+        public BotReceiverServiceBase(IOptions<RabbitMqConfiguration> mqConfig, IMqSender mqSender)
         {
             _mqConfiguration = mqConfig;
-            _stockApiClient = stockApiClient;
-            _csvFileHelper = csvFileHelper;
             _mqSender = mqSender;
             StartRabbitMQ();
         }

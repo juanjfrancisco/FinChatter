@@ -15,7 +15,8 @@ namespace FinChatter.Infrastructure.MQ
     internal class BotReceiverChatSenderService : BotReceiverServiceBase
     {
         private readonly IHubContext<FinChatterHub> _finChatHub;
-        public BotReceiverChatSenderService(IOptions<RabbitMqConfiguration> mqConfig, IStockApiClient stockApiClient, ICsvFileHelper csvFileHelper, IMqSender mqSender, IHubContext<FinChatterHub> finChatHub) : base(mqConfig, stockApiClient, csvFileHelper, mqSender)
+        public BotReceiverChatSenderService(IOptions<RabbitMqConfiguration> mqConfig, IMqSender mqSender, IHubContext<FinChatterHub> finChatHub) 
+            : base(mqConfig,  mqSender)
         {
             _finChatHub = finChatHub;
         }
