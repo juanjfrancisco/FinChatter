@@ -22,12 +22,43 @@ namespace FinChatter.Infrastructure.MQ
         {
             var content = Encoding.UTF8.GetString(body);
             var message = JsonSerializer.Deserialize<ChatMessage>(content);
-            var quotes = await _stockService.GetStockQuote(message.Message);
-
             message.UserName = "#boot";
+            message.SentDate = DateTime.Now;
+            GetStockQuotesResponse[] quotes;
+            try
+            {
+                quotes = await _stockService.GetStockQuote(message.Message);
+            }
+            catch (Exception ex)
+            {
+                message.Message = "Sorry the stock service is not avaliable. Try again later.";
+                _mqSender.SendMessage(message);
+                //Todo: implement log.
+                Console.WriteLine(ex.Message);
+                return;
+            }
 
-            if (quotes != null && quotes.Count > 0)
-                message.Message = String.Join('\n', quotes.Select(quote => $"{quote.Symbol} quote is ${quote.Close} per share."));
+            if (quotes != null && quotes.Length > 0)
+            {
+                StringBuilder botResponse = new StringBuilder(quotes.Length);
+                int len = quotes.Length; 
+                if (quotes.Length > 5)
+                {
+                    len = 5;
+                    botResponse.AppendLine("We only allow 5 simultaneous queries. Here are the first 5 stock code:");
+                }
+
+                for (int i = 0; i < len; i++)
+                {
+                    if (string.IsNullOrEmpty(quotes[i].Close) || quotes[i].Close.ToUpper().Equals("N/D"))
+                        botResponse.AppendLine($"{quotes[i].Symbol} quote was not found. Check if the stock code is correct.");
+                    else
+                        botResponse.AppendLine($"{quotes[i].Symbol} quote is ${quotes[i].Close} per share.");
+
+                }
+
+                message.Message = botResponse.ToString();
+            }
             else
                 message.Message = "No record found sorry";
             message.SentDate = DateTime.Now;

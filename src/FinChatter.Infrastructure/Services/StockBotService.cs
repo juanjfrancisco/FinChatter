@@ -20,11 +20,11 @@ namespace FinChatter.Infrastructure.Services
             _csvFileHelper = csvFileHelper;
         }
 
-        public async Task<List<GetStockQuotesResponse>> GetStockQuote(string message)
+        public async Task<GetStockQuotesResponse[]> GetStockQuote(string message)
         {
             var symbols = GetStockCodes(message);
             var quotesStream = await _stockApiClient.GetStockQuotesCsvAsync(symbols);
-            return _csvFileHelper.GetRecords<GetStockQuotesResponse>(quotesStream).ToList();
+            return _csvFileHelper.GetRecords<GetStockQuotesResponse>(quotesStream).ToArray();
         }
 
         private string[] GetStockCodes(string message)
