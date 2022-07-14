@@ -13,11 +13,15 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
+var config = builder.Configuration;
+var ApiBaseUrl = config.GetSection("FinChatterAPI").GetValue<string>("BaseUrl");
+
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
 builder.Services.AddScoped<AuthenticationService>();
-builder.Services.AddSingleton<IFinChatterApiClient>(RestService.For<IFinChatterApiClient>("https://localhost:7208"));
+builder.Services.AddSingleton<IFinChatterApiClient>(RestService.For<IFinChatterApiClient>(ApiBaseUrl));
 builder.Services.AddScoped<ChatClient>();
+
 await builder.Build().RunAsync();
