@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinChatter.WebUI", "src\Fin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinChatter.API.Client", "src\FinChatter.API.Client\FinChatter.API.Client.csproj", "{964563FC-A420-484E-AB68-1FDBAA87D735}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinChatter.BotService", "src\FinChatter.BotService\FinChatter.BotService.csproj", "{345CC2D7-DAF4-4276-B17A-FA6A3034611C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinChatter.BotService", "src\FinChatter.BotService\FinChatter.BotService.csproj", "{345CC2D7-DAF4-4276-B17A-FA6A3034611C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

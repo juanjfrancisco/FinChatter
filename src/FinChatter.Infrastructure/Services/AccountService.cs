@@ -37,7 +37,8 @@ namespace FinChatter.Infrastructure.Services
             {
                 var errors = createResponse.Errors.Select(e => e.Description);
                 result.IsSuccess = false;
-                result.Message = String.Join('\n', errors);
+                result.Message = "Sorry, there were validation errors. See detail";
+                result.ValidationError = errors;
             }
 
             return result;

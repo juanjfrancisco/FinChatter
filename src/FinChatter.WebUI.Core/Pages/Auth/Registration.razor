@@ -1,0 +1,73 @@
+﻿@page "/registration"
+@layout AuthLayout
+@inject NavigationManager navigationManager
+@inject FinChatterApiService finchatterApi
+
+
+<EditForm Model="registerRequest" OnValidSubmit="Register" class="row g-3">
+    <DataAnnotationsValidator />
+    <h4>Registration</h4>
+    <div class="col-12">
+        <label>Username:</label>
+        <InputText id="email" class="form-control" @bind-Value="registerRequest.UserName" />
+        <ValidationMessage For="@(() => registerRequest.UserName)" />
+    </div>
+    <div class="col-12">
+        <label>Emailaddress:</label>
+        <InputText id="email" class="form-control" @bind-Value="registerRequest.EmailAddress" />
+        <ValidationMessage For="@(() => registerRequest.EmailAddress)" />
+    </div>
+    <div class="col-12">
+        <label>Password:</label>
+        <InputText type="password" id="password" class="form-control" @bind-Value="registerRequest.Password" />
+        <ValidationMessage For="@(() => registerRequest.Password)" />
+    </div>
+
+    <div class="col-12">
+        <label>Confirm Password:</label>
+        <InputText type="password" id="confirm" class="form-control" @bind-Value="registerRequest.ConfirmPassword" />
+        <ValidationMessage For="@(() => registerRequest.ConfirmPassword)" />
+    </div>
+
+    <div class="col-12">
+        <button type="submit" class="btn btn-dark float-end">Register</button>
+    </div>
+</EditForm>
+
+<hr class="mt-4">
+<div class="col-12">
+    <p class="text-center mb-0">Already registered? <a href="/login">Login</a></p>
+</div>
+
+@if (ShowRegistrationErrors)
+{
+    <div class="col-12 mt-4">
+        <div class="alert alert-danger" role="alert">
+            @foreach (var error in Errors)
+            {
+                <p>@error</p>
+            }
+        </div>
+    </div>
+}
+
+@code {
+
+    private RegisterRequest registerRequest = new RegisterRequest();
+    public bool ShowRegistrationErrors { get; set; }
+    public IEnumerable<string> Errors { get; set; }
+    public async Task Register()
+    {
+        ShowRegistrationErrors = false;
+        var result = await finchatterApi.Register(registerRequest);
+        if (!result.IsSuccess)
+        {
+            Errors = result.ValidationError;
+            ShowRegistrationErrors = true;
+        }
+        else
+        {
+            navigationManager.NavigateTo("/");
+        }
+    }
+}

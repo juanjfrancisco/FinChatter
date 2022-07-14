@@ -29,6 +29,8 @@ namespace FinChatter.API.Contracts.Response
 
         public int StatusCode { get; set; }
 
+        public IEnumerable<string> ValidationError { get; set; }
+
         private void SetDefaults(int code = 0)
         {
             Code = code;

@@ -1,10 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FinChatter.WebUI.Core.AuthProviders
 {
@@ -12,7 +7,7 @@ namespace FinChatter.WebUI.Core.AuthProviders
     {
         public async override Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            await Task.Delay(1500);
+            await Task.Delay(800);
 
             var claims = new List<Claim>
             {
@@ -20,7 +15,7 @@ namespace FinChatter.WebUI.Core.AuthProviders
                 new Claim(ClaimTypes.Role, "Administrator")
             };
             var anonymous = new ClaimsIdentity(claims, "testAuthType");
-           // anonymous = new ClaimsIdentity();
+            anonymous = new ClaimsIdentity();
 
             return await Task.FromResult(new AuthenticationState(new ClaimsPrincipal(anonymous)));
         }
