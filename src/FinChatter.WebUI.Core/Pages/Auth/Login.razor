@@ -1,17 +1,22 @@
 ﻿@page "/login"
 @layout AuthLayout
 @inject NavigationManager navigationManager
-@inject FinChatterApiService finchatterApi
+@inject AuthenticationService authService
 
-<form action="" method="" class="row g-3">
+
+<EditForm Model="loginRequest" OnValidSubmit="ExecuteLogin" class="row g-3">
+    <DataAnnotationsValidator />
+
     <h4>Welcome Back</h4>
     <div class="col-12">
         <label>Username</label>
-        <input type="text" name="username" class="form-control" placeholder="Username">
+        <InputText id="email" class="form-control" @bind-Value="loginRequest.UserName" />
+        <ValidationMessage For="@(() => loginRequest.UserName)" />
     </div>
     <div class="col-12">
         <label>Password</label>
-        <input type="password" name="password" class="form-control" placeholder="Password">
+        <InputText type="password" id="password" class="form-control" @bind-Value="loginRequest.Password" />
+        <ValidationMessage For="@(() => loginRequest.Password)" />
     </div>
     <div class="col-12">
         <div class="form-check">
@@ -22,13 +27,40 @@
     <div class="col-12">
         <button type="submit" class="btn btn-dark float-end">Login</button>
     </div>
-</form>
+</EditForm>
+
 
 <hr class="mt-4">
 <div class="col-12">
     <p class="text-center mb-0">Have not account yet? <a href="/registration">Register</a></p>
 </div>
 
-@code {
+@if (ShowAuthError)
+{
+    <div class="col-12 mt-4">
+        <div class="alert alert-danger" role="alert">
+            <p>@Error</p>
+        </div>
+    </div>
+}
 
+@code {
+    private LoginRequest loginRequest = new LoginRequest();
+    public bool ShowAuthError { get; set; }
+    public string Error { get; set; }
+
+    public async Task ExecuteLogin()
+    {
+        ShowAuthError = false;
+        var result = await authService.Login(loginRequest);
+        if (!result.IsSuccess)
+        {
+            Error = result.Message;
+            ShowAuthError = true;
+        }
+        else
+        {
+            navigationManager.NavigateTo("/");
+        }
+    }
 }

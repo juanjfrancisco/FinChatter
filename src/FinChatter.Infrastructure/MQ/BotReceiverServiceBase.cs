@@ -18,7 +18,16 @@ namespace FinChatter.Infrastructure.MQ
         {
             _mqConfiguration = mqConfig;
             _mqSender = mqSender;
-            StartRabbitMQ();
+            try
+            {
+                StartRabbitMQ();
+            }
+            catch 
+            {
+
+                //todo
+            }
+            
         }
 
         private void StartRabbitMQ()
@@ -55,7 +64,15 @@ namespace FinChatter.Infrastructure.MQ
             consumer.Unregistered += OnConsumerUnregistered;
             consumer.ConsumerCancelled += OnConsumerCancelled;
 
-            _mqChannel.BasicConsume(_mqConfiguration.Value.QueueNameToListen, false, consumer);
+            try
+            {
+                _mqChannel.BasicConsume(_mqConfiguration.Value.QueueNameToListen, false, consumer);
+            }
+            catch 
+            {
+                //todo
+            }
+            
 
             return Task.CompletedTask;
         }

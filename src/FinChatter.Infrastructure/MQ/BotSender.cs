@@ -15,7 +15,7 @@ namespace FinChatter.Infrastructure.MQ
         public BotSender(IOptions<RabbitMqConfiguration> mqConfiguration)
         {
             _mqConfiguration = mqConfiguration;
-            CreateConnection();
+            //CreateConnection();
         }
 
         private void CreateConnection()
@@ -27,7 +27,15 @@ namespace FinChatter.Infrastructure.MQ
                 Password = _mqConfiguration.Value.Password,
             };
 
-            _mqConnection = connFactory.CreateConnection();
+            try
+            {
+                _mqConnection = connFactory.CreateConnection();
+            }
+            catch
+            {
+                //Todo log exepction
+            }
+            
         }
 
         private bool ConnectionExists()

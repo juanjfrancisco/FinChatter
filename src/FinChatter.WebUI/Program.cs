@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using FinChatter.API.Client;
 using FinChatter.WebUI.Core;
 using FinChatter.WebUI.Core.AuthProviders;
@@ -13,9 +14,10 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddAuthorizationCore();
-builder.Services.AddScoped<AuthenticationStateProvider, TestAuthStateProvider>();
+builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
+builder.Services.AddScoped<AuthenticationService>();
 builder.Services.AddSingleton<IFinChatterApiClient>(RestService.For<IFinChatterApiClient>("https://localhost:7208"));
-builder.Services.AddSingleton<FinChatterApiService>();
 
 await builder.Build().RunAsync();

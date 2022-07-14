@@ -53,11 +53,9 @@ namespace FinChatter.Infrastructure
 
             try
             {
-                var connection = factory.CreateConnection();
-                services
-                     .AddSingleton(connection)
-                     .AddHealthChecks()
-                     .AddRabbitMQ();
+                services.AddHealthChecks().AddRabbitMQ();
+                services.AddSingleton(factory.CreateConnection());
+
             }
             catch (Exception e)
             {

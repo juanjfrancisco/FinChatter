@@ -1,7 +1,7 @@
 ﻿@page "/registration"
 @layout AuthLayout
 @inject NavigationManager navigationManager
-@inject FinChatterApiService finchatterApi
+@inject AuthenticationService authService
 
 
 <EditForm Model="registerRequest" OnValidSubmit="Register" class="row g-3">
@@ -59,7 +59,7 @@
     public async Task Register()
     {
         ShowRegistrationErrors = false;
-        var result = await finchatterApi.Register(registerRequest);
+        var result = await authService.Register(registerRequest);
         if (!result.IsSuccess)
         {
             Errors = result.ValidationError;
