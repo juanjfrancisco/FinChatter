@@ -1,15 +1,17 @@
 ﻿@page "/chat"
+@using Blazored.LocalStorage
 @inject NavigationManager navigationManager
 @inject AuthenticationService finchatterApi
+@inject ILocalStorageService _localStorage
 @attribute [Authorize]
 
 <h1>Welcome to FinChatter</h1>
 <hr />
 
-@if (!_isChatting)
-{
+@*@if (!_isChatting)
+    {
     <p>
-        Enter your name to start chatting:
+    Enter your name to start chatting:
     </p>
 
     <input type="text" maxlength="32" @bind="@_username" />
@@ -18,43 +20,46 @@
     // Error messages
     @if (_message != null)
     {
-        <div class="invalid-feedback">@_message</div>
-        <small id="emailHelp" class="form-text text-muted">@_message</small>
+    <div class="invalid-feedback">@_message</div>
+    <small id="emailHelp" class="form-text text-muted">@_message</small>
     }
-}
-else
-{
-    // banner to show current user
-    <div class="alert alert-secondary mt-4" role="alert">
-        <span class="oi oi-person mr-2" aria-hidden="true"></span>
-        <span>You are connected as <b>@_username</b></span>
-        <button class="btn btn-sm btn-warning ml-md-auto" @onclick="@DisconnectAsync">Disconnect</button>
-    </div>
-    // display messages
-    <div id="scrollbox">
-        @foreach (var item in _messages)
-        {
-            @if (item.IsNotice)
-            {
-                <div class="alert alert-info">@item.Body</div>
-            }
-            else
-            {
-                <div class="@item.CSS">
-                    <div class="user">@item.Username</div>
-                    <div class="msg">@item.Body</div>
-                </div>
-            }
-        }
-        <hr />
-        <textarea class="input-lg" placeholder="enter your comment" @bind="@_newMessage"></textarea>
-        <button class="btn btn-default" @onclick="@(() => SendAsync(_newMessage))">Send</button>
-    </div>
-}
+    }
+    else
+    {
 
+    }*@
+
+
+<div class="alert alert-secondary mt-4" role="alert">
+    <span class="oi oi-person mr-2" aria-hidden="true"></span>
+    <span>You are connected as <b>@_username</b></span>
+    <button class="btn btn-sm btn-warning ml-md-auto" @onclick="@DisconnectAsync">Disconnect</button>
+</div>
+    
+<div id="scrollbox">
+    @foreach (var item in _messages)
+    {
+        @if (item.IsNotice)
+        {
+            <div class="alert alert-info">@item.Body</div>
+        }
+        else
+        {
+            <div class="@item.CSS">
+                <div class="user">@item.Username</div>
+                <div class="msg">@item.Body</div>
+            </div>
+        }
+    }
+    <hr />
+    <textarea class="input-lg" placeholder="enter your comment" @bind="@_newMessage"></textarea>
+    <button class="btn btn-default" @onclick="@(() => SendAsync(_newMessage))">Send</button>
+</div>
 @code {
 
-    private bool _isChatting = false;
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState { get; set; }
+    // private bool _isChatting = true;
     private string _username;
     private string _message;
     private string _newMessage;
@@ -65,28 +70,31 @@ else
     private string _hubUrl;
     private HubConnection _hubConnection;
 
+    protected async override Task OnInitializedAsync()
+    {
+        await StartChat();
+        //return base.OnInitializedAsync();
+    }
+
     public async Task StartChat()
     {
-        if (string.IsNullOrWhiteSpace(_username))
+        var authState = await AuthState;
+        var user = authState.User;
+        if (!user.Identity.IsAuthenticated)
         {
-            _message = "Please enter a name";
             return;
-        };
+        }
 
         try
         {
-            var loginResponse = await finchatterApi.Login(new LoginRequest
-                {
-                    UserName = _username,
-                    Password = ""
-                });
 
-            _isChatting = true;
+            _username = user.Identity.Name;
+            //_isChatting = true;
             await Task.Delay(1);
 
             _messages.Clear();
 
-            _hubUrl = loginResponse.Data.FinChatterUrl;
+            _hubUrl = await _localStorage.GetItemAsync<string>("finChatterUrl");//loginResponse.Data.FinChatterUrl;
 
             _hubConnection = new HubConnectionBuilder()
                 .WithUrl(_hubUrl)
@@ -101,7 +109,8 @@ else
         catch (Exception e)
         {
             _message = $"ERROR: Failed to start chat client: {e.Message}";
-            _isChatting = false;
+            //Todo: show error
+            //_isChatting = false;
         }
     }
 
@@ -116,21 +125,25 @@ else
 
     private async Task DisconnectAsync()
     {
-        if (_isChatting)
-        {
-            await SendAsync($"[Notice] {_username} left chat room.");
+        //if (_isChatting)
+        //{
 
-            await _hubConnection.StopAsync();
-            await _hubConnection.DisposeAsync();
+        //    //_isChatting = false;
+        //}
 
-            _hubConnection = null;
-            _isChatting = false;
-        }
+        await SendAsync($"[Notice] {_username} left chat room.");
+
+        await _hubConnection.StopAsync();
+        await _hubConnection.DisposeAsync();
+
+        _hubConnection = null;
+        navigationManager.NavigateTo("/");
+
     }
 
     private async Task SendAsync(string message)
     {
-        if (_isChatting && !string.IsNullOrWhiteSpace(message))
+        if (!string.IsNullOrWhiteSpace(message))
         {
             await _hubConnection.SendAsync("SendMessage", new ChatMessage { UserName = _username, Message = message });
 
