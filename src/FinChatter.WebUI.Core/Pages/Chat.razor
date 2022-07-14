@@ -1,8 +1,7 @@
 ﻿@page "/chat"
 @using Blazored.LocalStorage
 @inject NavigationManager navigationManager
-@inject AuthenticationService finchatterApi
-@inject ILocalStorageService _localStorage
+@inject ChatClient _chatClient
 @attribute [Authorize]
 
 <h1>Welcome to FinChatter</h1>
@@ -55,8 +54,6 @@ else
     // list of messages in chat
     private List<Message> _messages = new List<Message>();
 
-    private HubConnection _hubConnection;
-
     protected async override Task OnInitializedAsync()
     {
         _isSuccess = false;
@@ -69,35 +66,16 @@ else
         var authState = await AuthState;
         var user = authState.User;
         if (!user.Identity.IsAuthenticated)
-        {
             return;
-        }
 
         try
         {
-
             _username = user.Identity.Name;
             await Task.Delay(1);
 
             _messages.Clear();
 
-            var hubUrl = await _localStorage.GetItemAsync<string>("finChatterUrl");
-
-            _hubConnection = new HubConnectionBuilder()
-                .WithUrl(hubUrl, options =>
-                {
-                    options.AccessTokenProvider = async () =>
-                    {
-                        return await _localStorage.GetItemAsync<string>("authToken");
-                    };
-                })
-                .Build();
-
-            _hubConnection.On<ChatMessage>("SendMessage", BroadcastMessage);
-
-            await _hubConnection.StartAsync();
-
-            await SendAsync($"[Notice] {_username} joined chat room.");
+            await _chatClient.StartConnection(_username, BroadcastMessage);
             _isSuccess = true;
         }
         catch (Exception e)
@@ -110,7 +88,6 @@ else
     private void BroadcastMessage(ChatMessage message)
     {
         bool isMine = message.UserName.Equals(_username, StringComparison.OrdinalIgnoreCase);
-
         _messages.Add(new Message(message.UserName, message.Message, isMine));
 
         StateHasChanged();
@@ -118,12 +95,7 @@ else
 
     private async Task DisconnectAsync()
     {
-        await SendAsync($"[Notice] {_username} left chat room.");
-
-        await _hubConnection.StopAsync();
-        await _hubConnection.DisposeAsync();
-
-        _hubConnection = null;
+        await _chatClient.DisconnectAsync(_username);
         navigationManager.NavigateTo("/");
 
     }
@@ -132,8 +104,7 @@ else
     {
         if (!string.IsNullOrWhiteSpace(message))
         {
-            await _hubConnection.SendAsync("SendMessage", new ChatMessage { UserName = _username, Message = message });
-
+            await _chatClient.SendAsync(message, _username);
             _newMessage = string.Empty;
         }
     }
