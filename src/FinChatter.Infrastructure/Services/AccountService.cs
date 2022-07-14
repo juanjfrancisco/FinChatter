@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -84,14 +85,24 @@ namespace FinChatter.Infrastructure.Services
         {
             result.StatusCode = 401;
             result.Code = 401;
-            result.Message = "Unauthorized";
+            result.Message = "Invalid username or password. Please try again.";
             result.IsSuccess = false;
             return result;
         }
 
         private async Task<bool> ValidateUser(LoginRequest request)
         {
-            return true;
+            if (request == null)
+                return false;
+
+            var user = await _userManager.FindByNameAsync(request.UserName);
+            if (user != null &&
+                await _userManager.CheckPasswordAsync(user, request.Password))
+            {
+                return true;
+            }
+
+            return false;
         }
 
     }
