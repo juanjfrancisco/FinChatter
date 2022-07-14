@@ -19,5 +19,5 @@ builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
 builder.Services.AddScoped<AuthenticationService>();
 builder.Services.AddSingleton<IFinChatterApiClient>(RestService.For<IFinChatterApiClient>("https://localhost:7208"));
-
+builder.Services.AddScoped<ChatClient>();
 await builder.Build().RunAsync();

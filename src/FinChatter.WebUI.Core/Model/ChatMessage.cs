@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FinChatter.WebUI.Core.Model
 {
-    internal class ChatMessage
+    public class ChatMessage
     {
         public ChatMessage()
         {
