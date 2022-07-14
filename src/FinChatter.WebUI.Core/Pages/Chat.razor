@@ -18,7 +18,7 @@
     </div>
 
     <div id="scrollbox">
-        @foreach (var item in _messages)
+        @foreach (var item in _messages.TakeLast(50))
         {
             @if (item.IsNotice)
             {
@@ -27,7 +27,10 @@
             else
             {
                 <div class="@item.CSS">
-                    <div class="user">@item.Username</div>
+                    <div class="user">
+                        @item.Username<br>
+                        <span style="font-size: .6em; color: white">@item.TimeStamp</span>
+                    </div>
                     <div class="msg">@item.Body</div>
                 </div>
             }
@@ -98,8 +101,9 @@ else
 
     private void BroadcastMessage(ChatMessage message)
     {
+        var sentDate = message.SentDate.ToString("yyyy-MM-dd hh:mm tt");
         bool isMine = message.UserName.Equals(_username, StringComparison.OrdinalIgnoreCase);
-        _messages.Add(new Message(message.UserName, message.Message, isMine));
+        _messages.Add(new Message(message.UserName, message.Message, isMine, sentDate));
 
         StateHasChanged();
     }
@@ -131,16 +135,18 @@ else
 
     private class Message
     {
-        public Message(string username, string body, bool mine)
+        public Message(string username, string body, bool mine, string timeStamp)
         {
             Username = username;
             Body = body;
             Mine = mine;
+            TimeStamp = timeStamp;
         }
 
         public string Username { get; set; }
         public string Body { get; set; }
         public bool Mine { get; set; }
+        public string TimeStamp { get; set;  }
 
         public bool IsNotice => Body.StartsWith("[Notice]");
 
