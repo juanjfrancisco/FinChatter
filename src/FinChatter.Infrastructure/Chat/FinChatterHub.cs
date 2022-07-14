@@ -1,11 +1,12 @@
 ﻿using FinChatter.Application.Interfaces;
 using FinChatter.Application.Model;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace FinChatter.Infrastructure.Chat
 {
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public  class FinChatterHub : Hub
     {
         private readonly IConnectionMapping<Guid> _usersConnections;
