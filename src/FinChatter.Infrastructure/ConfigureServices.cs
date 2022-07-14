@@ -3,8 +3,11 @@ using FinChatter.Application.Model;
 using FinChatter.Infrastructure.Chat;
 using FinChatter.Infrastructure.Files;
 using FinChatter.Infrastructure.MQ;
+using FinChatter.Infrastructure.Persistence;
 using FinChatter.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -25,7 +28,11 @@ namespace FinChatter.Infrastructure
             services.AddSingleton<IMqSender, BotSender>();
             services.AddSingleton(typeof(IConnectionMapping<>), typeof(ConnectionMapping<>));
             services.AddScoped<IAccountService, AccountService>();
-            
+
+            services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlite(configuration.GetConnectionString("ApplicationDbContext")));
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                    .AddEntityFrameworkStores<ApplicationDbContext>();
+
             AddAuthentication(services);
             
             services.AddSignalR();

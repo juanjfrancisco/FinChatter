@@ -13,7 +13,7 @@ services.AddEndpointsApiExplorer();
 services.AddSwaggerApiHelp();
 
 services.AddInfrastructureServices(config);
-
+services.AddHealthChecks();
 
 builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
 {
@@ -32,7 +32,7 @@ app.UseCors("corsapp");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
+app.UseHealthChecks("/health");
 app.MapControllers();
 
 app.MapHub<FinChatterHub>(config.GetValue<string>("FinChatterHub"));

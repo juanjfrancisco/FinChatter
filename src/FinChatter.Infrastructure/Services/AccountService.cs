@@ -1,6 +1,7 @@
 ﻿using FinChatter.API.Contracts.Request;
 using FinChatter.API.Contracts.Response;
 using FinChatter.Application.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +13,49 @@ namespace FinChatter.Infrastructure.Services
     internal class AccountService : IAccountService
     {
         private readonly ITokenManager _tokenManager;
-        public AccountService(ITokenManager tokenManager)
+        private readonly UserManager<IdentityUser> _userManager;
+
+        public AccountService(ITokenManager tokenManager, UserManager<IdentityUser> userManager)
         {
             _tokenManager = tokenManager;
+            _userManager = userManager;
         }
+
+        public async Task<ClientResponse<RegisterResponse>> RegisterUser(RegisterRequest request)
+        {
+            ClientResponse<RegisterResponse> result = ValidateRegisterUser(request);
+            if (!result.IsSuccess)
+                return result;
+                
+            var user = new IdentityUser { 
+                UserName = request.UserName, 
+                Email = request.EmailAddress,  
+            };
+
+            var createResponse = await _userManager.CreateAsync(user, request.Password);
+            if (!createResponse.Succeeded)
+            {
+                var errors = createResponse.Errors.Select(e => e.Description);
+                result.IsSuccess = false;
+                result.Message = String.Join('\n', errors);
+            }
+
+            return result;
+        }
+
+        private ClientResponse<RegisterResponse> ValidateRegisterUser(RegisterRequest request)
+        {
+            var result = new ClientResponse<RegisterResponse>();
+            if (request == null)
+            {
+                result.IsSuccess = false;
+                result.StatusCode = 400;
+                result.Message = "Invalid request";
+                return result;
+            }
+            return result; 
+        }
+
         public async Task<ClientResponse<LoginResponse>> Login(LoginRequest request)
         {
             var result = new ClientResponse<LoginResponse>();
@@ -39,16 +79,12 @@ namespace FinChatter.Infrastructure.Services
             return result;
         }
 
-        public async Task<ClientResponse<RegisterResponse>> RegisterUser(RegisterRequest request)
-        {
-            return new ClientResponse<RegisterResponse>();
-        }
-
         private static ClientResponse<LoginResponse> GetUnauthorizedMessage(ClientResponse<LoginResponse> result)
         {
             result.StatusCode = 401;
             result.Code = 401;
             result.Message = "Unauthorized";
+            result.IsSuccess = false;
             return result;
         }
 

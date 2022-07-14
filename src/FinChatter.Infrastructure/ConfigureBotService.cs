@@ -42,11 +42,12 @@ namespace FinChatter.Infrastructure
 
             services.AddHealthChecksUI(opt =>
             {
-                opt.SetEvaluationTimeInSeconds(5); 
+                opt.SetEvaluationTimeInSeconds(30); 
                 opt.MaximumHistoryEntriesPerEndpoint(60); 
                 opt.SetApiMaxActiveRequests(1); 
 
-                opt.AddHealthCheckEndpoint("RabbitMQ Health", "/health"); 
+                opt.AddHealthCheckEndpoint("RabbitMQ Health", "/health");
+                opt.AddHealthCheckEndpoint("FinChatter.API", "https://localhost:7208/health");
             }).AddInMemoryStorage();
 
 
