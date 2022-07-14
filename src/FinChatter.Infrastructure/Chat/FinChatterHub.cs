@@ -1,9 +1,11 @@
 ﻿using FinChatter.Application.Interfaces;
 using FinChatter.Application.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace FinChatter.Infrastructure.Chat
 {
+    [Authorize]
     public  class FinChatterHub : Hub
     {
         private readonly IConnectionMapping<Guid> _usersConnections;
