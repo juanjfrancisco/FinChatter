@@ -1,8 +1,7 @@
 ﻿@page "/chat"
 @inject NavigationManager navigationManager
-@using Microsoft.AspNetCore.SignalR.Client;
-@using Refit
-@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@inject FinChatterApiService finchatterApi
+@attribute [Authorize]
 
 <h1>Welcome to FinChatter</h1>
 <hr />
@@ -54,16 +53,10 @@ else
 }
 
 @code {
-    // flag to indicate chat status
+
     private bool _isChatting = false;
-
-    // name of the user who will be chatting
     private string _username;
-
-    // on-screen message
     private string _message;
-
-    // new message input
     private string _newMessage;
 
     // list of messages in chat
@@ -74,7 +67,6 @@ else
 
     public async Task StartChat()
     {
-        // check username is valid
         if (string.IsNullOrWhiteSpace(_username))
         {
             _message = "Please enter a name";
@@ -83,23 +75,16 @@ else
 
         try
         {
-            var finChatterApiClient = RestService.For<IFinChatterApiClient>("https://localhost:7208");
-            var loginResponse = await finChatterApiClient.Login(new API.Contracts.Request.LoginRequest
+            var loginResponse = await finchatterApi.Login(new LoginRequest
                 {
                     UserName = _username,
                     Password = ""
                 });
 
-            Console.WriteLine(loginResponse.Data.FinChatterUrl);
-            // Start chatting and force refresh UI.
             _isChatting = true;
             await Task.Delay(1);
 
-            // remove old messages if any
             _messages.Clear();
-
-            // Create the chat client
-            string baseUrl = navigationManager.BaseUri;
 
             _hubUrl = loginResponse.Data.FinChatterUrl;
 
@@ -126,7 +111,6 @@ else
 
         _messages.Add(new Message(message.UserName, message.Message, isMine));
 
-        // Inform blazor the UI needs updating
         StateHasChanged();
     }
 
@@ -148,7 +132,7 @@ else
     {
         if (_isChatting && !string.IsNullOrWhiteSpace(message))
         {
-            await _hubConnection.SendAsync("SendMessage", new ChatMessage { UserName = _username, Message = message } );
+            await _hubConnection.SendAsync("SendMessage", new ChatMessage { UserName = _username, Message = message });
 
             _newMessage = string.Empty;
         }
