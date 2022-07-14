@@ -22,6 +22,7 @@ namespace FinChatter.Infrastructure.Services
 
         public async Task<GetStockQuotesResponse[]> GetStockQuote(string message)
         {
+            message = message.Trim().ToLower();
             var symbols = GetStockCodes(message);
             var quotesStream = await _stockApiClient.GetStockQuotesCsvAsync(symbols);
             return _csvFileHelper.GetRecords<GetStockQuotesResponse>(quotesStream).ToArray();

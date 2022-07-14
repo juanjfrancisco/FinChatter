@@ -27,7 +27,7 @@ namespace FinChatter.Infrastructure.Chat
         private static bool IsCommand(ChatMessage message)
         {
             //Todo: improve command options
-            return message != null && !string.IsNullOrEmpty(message.Message) && message.Message.Contains("/stock=");
+            return message != null && !string.IsNullOrEmpty(message.Message) && message.Message.ToLower().Contains("/stock=");
         }
 
         public override Task OnConnectedAsync()
