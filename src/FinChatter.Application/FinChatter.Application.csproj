@@ -6,4 +6,8 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FinChatter.API.Contracts\FinChatter.API.Contracts.csproj" />
+  </ItemGroup>
+
 </Project>

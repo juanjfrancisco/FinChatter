@@ -23,10 +23,14 @@ namespace FinChatter.Infrastructure
             services.AddSingleton<IStockApiClient, StockApiClient>();
             services.AddSingleton<ICsvFileHelper, CsvFileHelper>();
             services.AddSingleton<IMqSender, BotSender>();
-            AddAuthentication(services);
             services.AddSingleton(typeof(IConnectionMapping<>), typeof(ConnectionMapping<>));
+            services.AddScoped<IAccountService, AccountService>();
+            
+            AddAuthentication(services);
+            
             services.AddSignalR();
             services.AddHostedService<BotReceiverChatSenderService>();
+            
             return services;
         }
 

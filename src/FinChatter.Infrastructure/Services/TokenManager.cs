@@ -20,12 +20,15 @@ namespace FinChatter.Infrastructure.Services
 
         public string IssuerSigningKey { get; private set; }
 
+        public double ExpirationInMinutes { get; private set; }
+
         public TokenManager(IOptions<TokenManagerConfiguration> tokenOptions)
         {
             SecAlgorithms = SecurityAlgorithms.HmacSha512Signature;
             Issuer = tokenOptions.Value.Issuer;
             Audience = tokenOptions.Value.Audience;
             IssuerSigningKey = tokenOptions.Value.IssuerSigningKey;
+            ExpirationInMinutes = tokenOptions.Value.ExpirationInMinutes;
         }
 
         /// <summary>

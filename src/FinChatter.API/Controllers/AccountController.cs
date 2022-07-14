@@ -15,9 +15,11 @@ namespace FinChatter.API.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public AccountController(IConfiguration configuration)
+        private readonly IAccountService _accountService;
+        public AccountController(IConfiguration configuration, IAccountService accountService)
         {
             _configuration = configuration;
+            _accountService = accountService;
         }
 
         /// <summary>
@@ -28,9 +30,8 @@ namespace FinChatter.API.Controllers
         [HttpPost("register")]
         public async Task<ClientResponse<RegisterResponse>> RegisterUser(RegisterRequest request)
         {
-            
-            Response.StatusCode = (int)System.Net.HttpStatusCode.Created;
-            return new ClientResponse<RegisterResponse> (System.Net.HttpStatusCode.Created) { };
+            var response = await _accountService.RegisterUser(request);
+            return response;
         }
 
         /// <summary>
@@ -41,18 +42,19 @@ namespace FinChatter.API.Controllers
         [HttpPost("login")]
         public async Task<ClientResponse<LoginResponse>> Login(LoginRequest request)
         {
+            var response = await _accountService.Login(request);
+
+            if(response.IsSuccess && response.Data != null)
+                response.Data.FinChatterUrl = GetHubUrl();
+
+            return response;
+        }
+
+        private string GetHubUrl()
+        {
             var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
             var hubUrl = $"{baseUrl}{_configuration.GetValue<string>("FinChatterHub")}";
-            Response.StatusCode = (int)System.Net.HttpStatusCode.OK;
-            return new ClientResponse<LoginResponse>(System.Net.HttpStatusCode.OK) { 
-                Data = new LoginResponse
-                {
-                    AvatarUrl = "/images/demo.png",
-                    FinChatterUrl = hubUrl,
-                    Token = "",
-                    UserName = request.UserName
-                }
-            };
+            return hubUrl;
         }
     }
 }

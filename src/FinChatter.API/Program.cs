@@ -37,4 +37,10 @@ app.MapControllers();
 
 app.MapHub<FinChatterHub>(config.GetValue<string>("FinChatterHub"));
 
+app.MapGet("/", context =>
+{
+    context.Response.Redirect("/help", permanent: false);
+    return Task.FromResult(0);
+});
+
 app.Run();
