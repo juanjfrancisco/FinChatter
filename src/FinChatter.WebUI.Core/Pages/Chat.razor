@@ -11,6 +11,19 @@
 
 @if (_isSuccess)
 {
+    <div class="row">
+        <div class="col-4">
+            <select id="groups" class="form-control" value="@_groupSelected" @onchange="ChangeGroup">
+                @foreach (var group in _rooms)
+                {
+                    <option value="@group.GroupName">@group.GroupName</option>
+                }
+            </select>
+        </div>
+        <div class="col-4">
+            <input type="text" placeholder="Type the new group name" class="form-control" @bind="@_newGroupName" @onkeyup="@AddNewGroup">
+        </div>
+    </div>
     <div class="alert alert-secondary mt-4" role="alert">
         <span class="oi oi-person mr-2" aria-hidden="true"></span>
         <span>You are connected as <b>@_username</b></span>
@@ -18,7 +31,7 @@
     </div>
 
     <div id="scrollbox">
-        @foreach (var item in _messages.TakeLast(50))
+        @foreach (var item in _messages.Where(w => w.GroupName == _groupSelected))
         {
             @if (item.IsNotice)
             {
@@ -37,7 +50,7 @@
         }
         <hr />
         <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Type a message" @bind="@_newMessage" @onkeyup="@Enter">
+            <input type="text" class="form-control" placeholder="Type a message" @bind="@_newMessage" @onkeyup="@SendAsyncOnEnter">
             <div class="input-group-append">
                 <button class="btn btn-outline-secondary" @onclick="@(() => SendAsync(_newMessage))">Send</button>
             </div>
@@ -59,9 +72,13 @@ else
     private string _username;
     private string _message;
     private string _newMessage;
+    private string _groupSelected;
+    private string _defaultGroup = "Public";
+    private string _newGroupName;
 
     // list of messages in chat
     private List<Message> _messages = new List<Message>();
+    private List<ChatRoom> _rooms = new List<ChatRoom>();
 
     protected async override Task OnInitializedAsync()
     {
@@ -70,10 +87,6 @@ else
         await StartChat();
     }
 
-    protected async override Task OnAfterRenderAsync(bool firstRender)
-    {
-        await JS.InvokeVoidAsync("AutoScroll");
-    }
 
     public async Task StartChat()
     {
@@ -89,7 +102,7 @@ else
 
             _messages.Clear();
 
-            await _chatClient.StartConnection(_username, BroadcastMessage);
+            await _chatClient.StartConnection(_username, _groupSelected, BroadcastMessage, PopulateCachedMessage, PopulateChatRooms, UpdateNewGroup);
             _isSuccess = true;
         }
         catch (Exception e)
@@ -101,30 +114,77 @@ else
 
     private void BroadcastMessage(ChatMessage message)
     {
+        if (message != null
+            && !string.IsNullOrEmpty(message.Message)
+            && !string.IsNullOrEmpty(message.UserName)
+            && message.UserName.ToLower().Equals("#boot"))
+        {
+            _chatClient.SaveMessageToCache(message);
+        }
+        AddMessageToList(message);
+        AutoScroll();
+        StateHasChanged();
+    }
+
+    private void AddMessageToList(ChatMessage message)
+    {
         var sentDate = message.SentDate.ToString("yyyy-MM-dd hh:mm tt");
         bool isMine = message.UserName.Equals(_username, StringComparison.OrdinalIgnoreCase);
-        _messages.Add(new Message(message.UserName, message.Message, isMine, sentDate));
+        _messages.Add(new Message(message.UserName, message.Message, isMine, sentDate, message.GroupName));
+    }
 
-        StateHasChanged();
+    private void PopulateCachedMessage(IList<ChatMessage> messages)
+    {
+        var cachedMessages = messages.ToArray();
+        if (cachedMessages.Length > 0)
+        {
+            for (int i = 0; i < cachedMessages.Length; i++)
+            {
+                AddMessageToList(cachedMessages[i]);
+            }
+
+            StateHasChanged();
+        }
+    }
+
+    private void PopulateChatRooms(IList<ChatRoom> groups)
+    {
+        var grps = groups.ToArray();
+        if (grps.Length > 0)
+        {
+            for (int i = 0; i < grps.Length; i++)
+            {
+                _rooms.Add(new ChatRoom { GroupName = grps[i].GroupName });
+            }
+
+            _groupSelected = _defaultGroup;
+            StateHasChanged();
+        }
+    }
+
+    void ChangeGroup(ChangeEventArgs e)
+    {
+        _groupSelected = e.Value.ToString();
+        AutoScroll();
     }
 
     private async Task DisconnectAsync()
     {
-        await _chatClient.DisconnectAsync(_username);
+        await _chatClient.DisconnectAsync(_username, _groupSelected);
         navigationManager.NavigateTo("/");
-
     }
 
     private async Task SendAsync(string message)
     {
         if (!string.IsNullOrWhiteSpace(message))
         {
-            await _chatClient.SendAsync(message, _username);
+            var group = !string.IsNullOrEmpty(_groupSelected) ? _groupSelected : _defaultGroup;
+            await _chatClient.SendAsync(message, _username, group);
             _newMessage = string.Empty;
         }
     }
 
-    public async Task Enter(KeyboardEventArgs e)
+    public async Task SendAsyncOnEnter(KeyboardEventArgs e)
     {
         if (e.Code == "Enter" || e.Code == "NumpadEnter")
         {
@@ -133,20 +193,48 @@ else
         }
     }
 
+    public async Task AddNewGroup(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            if (!string.IsNullOrWhiteSpace(_newGroupName))
+            {
+                await _chatClient.AddNewGroup(_newGroupName);
+            }
+        }
+    }
+
+    public void UpdateNewGroup(string groupName)
+    {
+        if (!string.IsNullOrWhiteSpace(groupName))
+        {
+            _rooms.Add(new ChatRoom { GroupName = groupName });
+            _newGroupName = string.Empty;
+            StateHasChanged();
+        }
+    }
+
+    public void AutoScroll()
+    {
+        Task.Run(async () => await JS.InvokeVoidAsync("AutoScroll"));
+    }
+
     private class Message
     {
-        public Message(string username, string body, bool mine, string timeStamp)
+        public Message(string username, string body, bool mine, string timeStamp, string groupName)
         {
             Username = username;
             Body = body;
             Mine = mine;
             TimeStamp = timeStamp;
+            GroupName = groupName;
         }
 
         public string Username { get; set; }
         public string Body { get; set; }
         public bool Mine { get; set; }
-        public string TimeStamp { get; set;  }
+        public string TimeStamp { get; set; }
+        public string GroupName { get; set; }
 
         public bool IsNotice => Body.StartsWith("[Notice]");
 

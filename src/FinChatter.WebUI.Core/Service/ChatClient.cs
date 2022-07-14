@@ -15,7 +15,9 @@ namespace FinChatter.WebUI.Core.Service
             _localStorage = localStorage;
         }
 
-        public async Task StartConnection(string username, Action<ChatMessage> handler)
+        public async Task StartConnection(string username, string groupName, Action<ChatMessage> handler, 
+            Action<IList<ChatMessage>> handlerCachedMessages, Action<IList<ChatRoom>> handlerChatRooms,
+            Action<string> handlerUpdateGroup)
         {
             var hubUrl = await _localStorage.GetItemAsync<string>("finChatterUrl");
 
@@ -30,20 +32,35 @@ namespace FinChatter.WebUI.Core.Service
                 .Build();
 
             ChatHubConnection.On<ChatMessage>("SendMessage", handler);
-
+            ChatHubConnection.On<IList<ChatRoom>>("GetChatRooms", handlerChatRooms);
+            ChatHubConnection.On<IList<ChatMessage>>("CachedMessages", handlerCachedMessages);
+            ChatHubConnection.On<string>("UpdateNewGroup", handlerUpdateGroup);
+            
             await ChatHubConnection.StartAsync();
-            await SendAsync($"[Notice] {username} joined chat room.", username);
+            await SendAsync($"[Notice] {username} joined chat room.", username, groupName);
         }
 
-        public async Task SendAsync(string message, string username)
+        public async Task SendAsync(string message, string username, string groupName)
         {
             if (!string.IsNullOrWhiteSpace(message))
-                await ChatHubConnection.SendAsync("SendMessage", new ChatMessage { UserName = username, Message = message });
+                await ChatHubConnection.SendAsync("SendMessage", new ChatMessage { UserName = username, Message = message, GroupName = groupName });
         }
 
-        public async Task DisconnectAsync(string username)
+        public void SaveMessageToCache(ChatMessage message)
         {
-            await SendAsync($"[Notice] {username} left chat room.", username);
+            if (message == null && !string.IsNullOrEmpty(message.Message))
+                ChatHubConnection.SendAsync("CacheMessages", message).Wait();
+        }
+
+        public async Task AddNewGroup(string groupName)
+        {
+            if (!string.IsNullOrEmpty(groupName))
+                await ChatHubConnection.SendAsync("AddNewGroup", groupName);
+        }
+
+        public async Task DisconnectAsync(string username, string groupName)
+        {
+            await SendAsync($"[Notice] {username} left chat room.", username, groupName);
 
             await ChatHubConnection.StopAsync();
             await ChatHubConnection.DisposeAsync();

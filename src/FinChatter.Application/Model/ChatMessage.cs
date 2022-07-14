@@ -3,9 +3,10 @@ namespace FinChatter.Application.Model
 {
     public class ChatMessage
     {
+        public static string DefaultGroupName = "Public";
         public ChatMessage()
         {
-            GroupName = "Public";
+            GroupName = DefaultGroupName;
             SentDate = DateTime.Now;
         }
         public string UserName { get; set; }
