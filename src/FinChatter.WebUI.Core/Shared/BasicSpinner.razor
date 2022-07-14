@@ -1,0 +1,16 @@
+﻿<div class="spinner-border float-end" role="status" style="display:@displayStyle">
+            <span class="visually-hidden">Loading...</span>
+</div>
+
+@code {
+
+    [Parameter]
+    public bool LoadingFlag { get; set; }
+
+    private string displayStyle = "none";
+    protected override void OnParametersSet()
+    {
+        displayStyle = LoadingFlag ? "block" : "none";
+        base.OnParametersSet();
+    }
+}

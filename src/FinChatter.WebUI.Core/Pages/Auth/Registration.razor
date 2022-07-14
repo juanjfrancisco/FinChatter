@@ -6,7 +6,7 @@
 
 <EditForm Model="registerRequest" OnValidSubmit="Register" class="row g-3">
     <DataAnnotationsValidator />
-    <h4>Registration</h4>
+    <h4>FinChatter - Registration</h4>
     <div class="col-12">
         <label>Username:</label>
         <InputText id="email" class="form-control" @bind-Value="registerRequest.UserName" />
@@ -30,7 +30,13 @@
     </div>
 
     <div class="col-12">
-        <button type="submit" class="btn btn-dark float-end">Register</button>
+
+        <BasicSpinner LoadingFlag=@_isLoading />
+        @if (!_isLoading)
+        {
+            <button type="submit" class="btn btn-dark float-end">Register</button>
+        }
+
     </div>
 </EditForm>
 
@@ -53,21 +59,36 @@
 
 @code {
 
+    private bool _isLoading = false;
     private RegisterRequest registerRequest = new RegisterRequest();
     public bool ShowRegistrationErrors { get; set; }
     public IEnumerable<string> Errors { get; set; }
     public async Task Register()
     {
-        ShowRegistrationErrors = false;
-        var result = await authService.Register(registerRequest);
-        if (!result.IsSuccess)
+        _isLoading = true;
+        try
         {
-            Errors = result.ValidationError;
-            ShowRegistrationErrors = true;
+            ShowRegistrationErrors = false;
+            var result = await authService.Register(registerRequest);
+            if (!result.IsSuccess)
+            {
+                Errors = result.ValidationError;
+                ShowRegistrationErrors = true;
+            }
+            else
+            {
+                navigationManager.NavigateTo("/login");
+            }
         }
-        else
+        catch (Exception ex)
         {
-            navigationManager.NavigateTo("/");
+            Errors = new List<string> { "Sorry an error ocurred." };
+            ShowRegistrationErrors = true;
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            _isLoading = false;
         }
     }
 }

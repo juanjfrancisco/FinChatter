@@ -92,7 +92,8 @@ namespace FinChatter.Infrastructure.Services
 
         private async Task<bool> ValidateUser(LoginRequest request)
         {
-            if (request == null)
+            if (request == null || string.IsNullOrEmpty(request.UserName) 
+                || string.IsNullOrEmpty(request.Password))
                 return false;
 
             var user = await _userManager.FindByNameAsync(request.UserName);
