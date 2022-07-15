@@ -23,6 +23,8 @@ Simple chat application with a bot that allows getting stock quotes.
 - Allow users to create more chatrooms.
 - Unit Test main functionalities.
 
+
+
 ## Technologies
 
 - [NET 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
@@ -32,6 +34,8 @@ Simple chat application with a bot that allows getting stock quotes.
 - [RabbitMQ](https://www.rabbitmq.com/)
 - [SignalR](https://dotnet.microsoft.com/en-us/apps/aspnet/signalr)
 - [Bootstrap 5](https://getbootstrap.com/docs/5.0/getting-started/introduction/)
+
+
 
 ## Getting Started
 
@@ -73,6 +77,11 @@ Simple chat application with a bot that allows getting stock quotes.
    | StockService              | src    | Client service to call https://stooq.com API                 |
    | FinChatter.UnitTest       | test   | All Unit test                                                |
 
-   ## Usage
+   
 
-   ​	When you first start the project in Visual Studio all NuGet packages start to update. After that the first thing you need to do is start all the projects going to the solution property window by doing right click in the solution and then choosing the option "Properties".
+## Usage
+
+​	When you first start the project in Visual Studio all NuGet packages start to update. After that the first thing you need to do is start all the projects going to the solution property window by doing right click in the solution and then choosing the option "Properties".
+
+![Solution properties window](https://raw.githubusercontent.com/juanjfrancisco/FinChatter/main/readmeFiles/solution-properties.jpg "Choose the projects marked in yellow to start")
+
