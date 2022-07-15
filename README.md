@@ -55,7 +55,7 @@ Simple chat application with a bot that allows getting stock quotes.
 
    - Run the following command:
 
-     ```bash
+     ```powershell
      docker run -d --hostname finchattermq --name finchatter-rabbit -p 5672:5672 -p 15672:15672 -e RABBITMQ_DEFAULT_USER=usr -e RABBITMQ_DEFAULT_PASS=Qwerty123$ rabbitmq:3-management 
      ```
 
@@ -85,3 +85,16 @@ Simple chat application with a bot that allows getting stock quotes.
 
 ![Solution properties window](https://raw.githubusercontent.com/juanjfrancisco/FinChatter/main/readmeFiles/solution-properties.jpg "Choose the projects marked in yellow to start")
 
+After that, you can start the projects and proceed to create a user to use the chat. 
+
+The database is in SQLite and you can found it the the following path src/FinChatter.API/finchatter.db. In case you wanna to delete the database you can do it and then go to Tools menu and chose Nuget Package Manager > Package Manager Console. After the windows is open choose the project  FinChatter.API and run the command:
+
+```powershell
+Update-Database
+```
+
+
+
+## Demo
+
+![Chat Demo]()
