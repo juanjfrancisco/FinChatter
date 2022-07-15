@@ -97,4 +97,4 @@ Update-Database
 
 ## Demo
 
-![Chat Demo]()
+![Chat Demo](https://github.com/juanjfrancisco/FinChatter/blob/main/readmeFiles/chat-demo.gif?raw=true)
