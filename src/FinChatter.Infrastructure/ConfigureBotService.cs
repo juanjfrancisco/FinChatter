@@ -33,21 +33,26 @@ namespace FinChatter.Infrastructure
             var mqUser = rabbitConfig.GetValue<string>("UserName");
             var mqPassword = rabbitConfig.GetValue<string>("Password");
             var mqHost = rabbitConfig.GetValue<string>("HostName");
+            var amqpPort = rabbitConfig.GetValue<int>("AmqpPort");
 
             var factory = new ConnectionFactory()
             {
-                Uri = new Uri($"amqp://{mqUser}:{mqPassword}@{mqHost}:5672"),
+                Uri = new Uri($"amqp://{mqUser}:{mqPassword}@{mqHost}:{amqpPort}"),
                 AutomaticRecoveryEnabled = true
             };
 
+            var endpointsHealthCheck = configuration.GetSection("AddHealthCheckEndpoint").Get<List<HealthCheckEndpointConfiguration>>();  
             services.AddHealthChecksUI(opt =>
             {
                 opt.SetEvaluationTimeInSeconds(30); 
                 opt.MaximumHistoryEntriesPerEndpoint(60); 
-                opt.SetApiMaxActiveRequests(1); 
+                opt.SetApiMaxActiveRequests(1);
 
-                opt.AddHealthCheckEndpoint("RabbitMQ Health", "/health");
-                opt.AddHealthCheckEndpoint("FinChatter.API", "https://localhost:7208/health");
+                endpointsHealthCheck.ForEach(endpoint =>
+                {
+                    opt.AddHealthCheckEndpoint(endpoint.Name, endpoint.Uri);
+                });
+                
             }).AddInMemoryStorage();
 
 

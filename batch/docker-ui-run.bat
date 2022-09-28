@@ -1,0 +1,1 @@
+docker run --net finchatter-net -d -p 5080:80 --name finchatter-ui finchatter.ui
