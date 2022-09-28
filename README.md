@@ -34,6 +34,7 @@ Simple chat application with a bot that allows getting stock quotes.
 - [RabbitMQ](https://www.rabbitmq.com/)
 - [SignalR](https://dotnet.microsoft.com/en-us/apps/aspnet/signalr)
 - [Bootstrap 5](https://getbootstrap.com/docs/5.0/getting-started/introduction/)
+- [Docker](https://www.docker.com/)
 
 
 
