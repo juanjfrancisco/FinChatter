@@ -1,0 +1,1 @@
+docker build -t finchatter.api -f .\src\FinChatter.API\Dockerfile .

@@ -1,0 +1,1 @@
+docker run --net finchatter-net -d -p 5308:80 --name finchatter-bot finchatter.botservice

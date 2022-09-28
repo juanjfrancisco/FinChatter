@@ -18,5 +18,10 @@ app.MapHealthChecks("/health", new HealthCheckOptions()
 app.MapHealthChecksUI();
 app.UseHttpsRedirection();
 
+app.MapGet("/", context =>
+{
+    context.Response.Redirect("/healthchecks-ui", permanent: false);
+    return Task.FromResult(0);
+});
 
 app.Run();

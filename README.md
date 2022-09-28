@@ -56,7 +56,7 @@ Simple chat application with a bot that allows getting stock quotes.
    - Run the following command:
 
      ```powershell
-     docker run -d --hostname finchattermq --name finchatter-rabbit -p 5672:5672 -p 15672:15672 -e RABBITMQ_DEFAULT_USER=usr -e RABBITMQ_DEFAULT_PASS=Qwerty123$ rabbitmq:3-management 
+     docker run  --net finchatter-net -d --hostname finchattermq --name finchatter-rabbit -p 5672:5672 -p 15672:15672 -e RABBITMQ_DEFAULT_USER=usr -e RABBITMQ_DEFAULT_PASS=Qwerty123$ rabbitmq:3-management 
      ```
 
      Please notice that I am using all parameter with the exact value I have in the appsettings.json for the API. That's something you can change, but if you do in the next you need to update the appsettings.json.
@@ -81,11 +81,11 @@ Simple chat application with a bot that allows getting stock quotes.
 
 ## Usage
 
-​	When you first start the project in Visual Studio all NuGet packages start to update. After that the first thing you need to do is start all the projects going to the solution property window by doing right click in the solution and then choosing the option "Properties".
+​	When you first start the project in Visual Studio all NuGet packages start to update. After that, the first thing you need to do is start all the projects going to the solution property window by doing right click in the solution and then choosing the option "Properties".
 
 ![Solution properties window](https://raw.githubusercontent.com/juanjfrancisco/FinChatter/main/readmeFiles/solution-properties.jpg "Choose the projects marked in yellow to start")
 
-After that, you can start the projects and proceed to create a user to use the chat. 
+Then, you can start the projects and proceed to create a user to use the chat. 
 
 The database is in SQLite and you can found it the the following path src/FinChatter.API/finchatter.db. In case you wanna to delete the database you can do it and then go to Tools menu and chose Nuget Package Manager > Package Manager Console. After the windows is open choose the project  FinChatter.API and run the command:
 
@@ -93,7 +93,65 @@ The database is in SQLite and you can found it the the following path src/FinCha
 Update-Database
 ```
 
+## How to install using Docker
 
+​	The application has integration with docker. To start, You need to have [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed on your machine and follow these instructions:
+
+1. Clone or download this repository.
+
+2. Open a terminal window and go to de root folder. The examples here are with PowerShell, but you can use any terminal you like. To facilitate the installation I created batch files with the docker's command to run.
+
+3. Install RabbitMQ instance.
+
+   ```powershell
+   .\batch\01-rabbit-onDockerInstall.bat
+   ```
+
+4. Install Finchatter.API service.
+
+   ```powershell
+   .\batch\02-docker-api-build.bat
+   ```
+
+5. Install Finchatter.BotService service.
+
+   ```powershell
+   .\batch\03-docker-botService-build.bat
+   ```
+
+6. Install Finchatter.UI.
+
+   ```powershell
+   .\batch\04-docker-ui-build.bat
+   ```
+
+7. Run each service
+
+   ```powershell
+   .\batch\05-docker-api-run.bat
+   ```
+
+   ```powershell
+   .\batch\06-docker-botService-run.bat
+   ```
+
+   ```powershell
+   .\batch\07-docker-ui-run.bat
+   ```
+
+
+
+After the installation, you can go and test the application. Here are the services URLs:
+
+| Service               | URL                    |
+| --------------------- | ---------------------- |
+| Finchatter.UI         | http://localhost:5080/ |
+| Finchatter.API        | http://localhost:5208/ |
+| Finchatter.BotService | http://localhost:5308/ |
+
+To check if all services are in good health you can go to the BotService http://localhost:5308/ to see the following screen:
+
+![Health check screen](https://github.com/juanjfrancisco/FinChatter/blob/main/readmeFiles/health-check.jpg?raw=true)
 
 ## Demo
 

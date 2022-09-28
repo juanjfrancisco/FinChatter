@@ -30,6 +30,7 @@ namespace FinChatter.Infrastructure
             services.AddScoped<IAccountService, AccountService>();
 
             services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlite(configuration.GetConnectionString("ApplicationDbContext")));
+
             services.AddIdentity<IdentityUser, IdentityRole>()
                     .AddEntityFrameworkStores<ApplicationDbContext>();
 

@@ -1,0 +1,1 @@
+docker build -t finchatter.ui -f .\src\FinChatter.WebUI\Dockerfile .
